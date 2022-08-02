@@ -2,11 +2,20 @@
 import time
 import RPi.GPIO as GPIO
 
-GPIO_BUTTON_LIST = [6, 13, 19, 26, 16, 20, 21]
+GPIO_BUTTON_LIST = [26, 1, 25, 18]
+
+class gpioall:
+    def __init__(self):
+        GPIO.setmode(GPIO.BCM)
+
+    def cleanup(self):
+        GPIO.cleanup()
 
 class button:
     def __init__(self):
-        self.setupGPIO()
+        GPIO.setup(GPIO_BUTTON_LIST, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        for port in GPIO_BUTTON_LIST:
+            GPIO.add_event_detect(port, GPIO.RISING, callback=self.internal_callback, bouncetime=500)
 
     def setcallback(self, _callback):
         self.callback = _callback
@@ -15,69 +24,63 @@ class button:
 #        print("arg: " + str(e))
         self.callback(GPIO_BUTTON_LIST.index(e))
 
-    def setupGPIO(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(GPIO_BUTTON_LIST, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-        for port in GPIO_BUTTON_LIST:
-            GPIO.add_event_detect(port, GPIO.FALLING, callback=self.internal_callback, bouncetime=500)
-
     def cleanup(self):
         for port in GPIO_BUTTON_LIST:
             GPIO.remove_event_detect(port)
-        GPIO.cleanup()
 
-GPIO_LED_LIST = [0, 1, 5]
+GPIO_LED_DIC = {0:{'R':12, 'G':16}, 1:{'R':8, 'G':0}, 2:{'R':23, 'G':24}, 3:{'R':14, 'G':15}} 
 
-class rgbled:
+class button_led:
     def __init__(self):
-        GPIO.setup(GPIO_LED_LIST, GPIO.OUT)
-        GPIO.output(GPIO_LED_LIST, GPIO.HIGH)
+        all_leds = list(GPIO_LED_DIC.values())
+        for leds in all_leds:
+            # print(leds['R'])
+            GPIO.setup(leds['R'], GPIO.OUT)
+            GPIO.output(leds['R'], GPIO.HIGH)
+            # print(leds['G'])
+            GPIO.setup(leds['G'], GPIO.OUT)
+            GPIO.output(leds['G'], GPIO.HIGH)
 
-    def Red(self, value):
+    def Red(self, num, value):
+        if num >= len(GPIO_LED_DIC):
+            return
         if value > 0:
-            GPIO.output(0, GPIO.LOW)
+            GPIO.output(GPIO_LED_DIC[num]['R'], GPIO.LOW)
         else:
-            GPIO.output(0, GPIO.HIGH)
+            GPIO.output(GPIO_LED_DIC[num]['R'], GPIO.HIGH)
 
-    def Green(self, value):
+    def Green(self, num, value):
+        if num >= len(GPIO_LED_DIC):
+            return
         if value > 0:
-            GPIO.output(5, GPIO.LOW)
+            GPIO.output(GPIO_LED_DIC[num]['G'], GPIO.LOW)
         else:
-            GPIO.output(5, GPIO.HIGH)
+            GPIO.output(GPIO_LED_DIC[num]['G'], GPIO.HIGH)
 
-    def Blue(self, value):
-        if value > 0:
-            GPIO.output(1, GPIO.LOW)
-        else:
-            GPIO.output(1, GPIO.HIGH)
-
-    def RGB(self, r, g, b):
-        self.Red(r)
-        self.Green(g)
-        self.Blue(b)
-
-    
+    def cleanup(self):
+        return
+         
 def callback_example(btn):
     print("Button " + str(btn) + " pushed.")
 
 if __name__ == "__main__":
+    gpio = gpioall()
     btn = button()
     btn.setcallback(callback_example)
-    led = rgbled()
+    led = button_led()
     try:
         while True:
-            time.sleep(0.5)
-            led.Red(1)
-            time.sleep(0.5)
-            led.Red(0)
-            time.sleep(0.5)
-            led.Green(1)
-            time.sleep(0.5)
-            led.Green(0)
-            time.sleep(0.5)
-            led.Blue(1)
-            time.sleep(0.5)
-            led.Blue(0)
+            for i in range(4):
+                time.sleep(0.5)
+                led.Red(i, 1)
+                time.sleep(0.5)
+                led.Red(i, 0)
+                time.sleep(0.5)
+                led.Green(i, 1)
+                time.sleep(0.5)
+                led.Green(i, 0)
     except KeyboardInterrupt:
         print("\nbreak.")
+        led.cleanup()
         btn.cleanup()
+        gpio.cleanup()
