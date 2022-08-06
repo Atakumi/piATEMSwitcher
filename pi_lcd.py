@@ -110,12 +110,28 @@ class gpiolcd:
       self.sendbyte(ord(message[i]),LCD_CHR)
 
 
+  def putchar(self, char):
+    self.sendbyte(char, LCD_CHR)
+
+
+  def locate(self, col, row):
+    # LCD_LINE_1 = 0x80 # LCD RAM address for the 1st line
+    # LCD_LINE_2 = 0xC0 # LCD RAM address for the 2nd line
+    dd_addr = col
+    if row == 1:
+      dd_addr += LCD_LINE_2
+    else:
+      dd_addr += LCD_LINE_1
+    self.sendbyte(dd_addr, LCD_CMD)
+
+
   def clear(self):
     self.sendbyte(0x01, LCD_CMD)
 
 
   def cleanup(self):
-    self.clear()
+    # do nothing
+    return
 
 
 if __name__ == '__main__':

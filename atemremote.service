@@ -1,0 +1,10 @@
+[Unit]
+Description=ATEM Switcher Remote Control
+After=network.target
+
+[Service]
+Type=exec
+ExecStart=/home/takua/piATEMSwitcher/atemremote.sh
+
+[Install]
+WantedBy=multi-user.target
