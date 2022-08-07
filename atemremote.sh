@@ -1,9 +1,11 @@
 #!/bin/bash
 
+sudo iw dev wlan0 set power_save off
+
 LOCALDIR=/home/takua/piATEMSwitcher
 cd $LOCALDIR
 
-sleep 10
+sleep 7
 while true; do
   python3 ${LOCALDIR}/main.py
   EXITCODE=$?

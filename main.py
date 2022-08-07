@@ -82,7 +82,9 @@ def reflect_buttonled():
 def signal_handler(signal_number, frame):
     if key_interrupt:
         return     # already handled
-    log.info("\nProcess terminated.")
+    return_code = 0
+    lcd.clear()
+    log.info("Process terminated.")
     terminate()
 
 def button_callback(btn):
@@ -173,7 +175,7 @@ if __name__ == "__main__":
 
     # Connect
     try:
-        switcher.connect(ip_address, connTimeout = 10)
+        switcher.connect(ip_address, connTimeout = 5)
         event.wait()
 
     except KeyboardInterrupt:
