@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=exec
-ExecStart=/home/takua/piATEMSwitcher/atemremote.sh
+ExecStart=/home/<your home folder>/piATEMSwitcher/atemremote.sh
 
 [Install]
 WantedBy=multi-user.target
