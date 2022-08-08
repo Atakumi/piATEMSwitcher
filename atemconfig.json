@@ -1,0 +1,33 @@
+{
+    "atem-config" : {
+        "ip-address" : "192.168.101.240",
+        "connect-timeout" : 5,
+        "buttons" : [
+            {
+                "index"        : 0,
+                "function"     : "preview",
+                "source"       : "input5",
+                "display-name" : "VI5 "
+            },
+            {
+                "index"        : 1,
+                "function"     : "preview",
+                "source"       : "input6",
+                "display-name" : "VI6 "
+            },
+            {
+                "index"        : 2,
+                "function"     : "preview",
+                "source"       : "mediaPlayer1",
+                "display-name" : "MP1 "
+            },
+            {
+                "index"        : 3,
+                "function"     : "auto",
+                "rate"         : 1.0,
+                "display-name" : "AUT "
+            }
+        ]
+    }
+}
+
