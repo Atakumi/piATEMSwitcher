@@ -1,8 +1,9 @@
 #!/bin/bash
 
+# turn off power save on WiFi adapter on raspberry pi. No need to do this if you're using wired LAN
 sudo iw dev wlan0 set power_save off
 
-LOCALDIR=/home/takua/piATEMSwitcher
+LOCALDIR=/home/<your home directory>/piATEMSwitcher
 cd $LOCALDIR
 
 sleep 7
