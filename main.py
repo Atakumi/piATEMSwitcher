@@ -96,6 +96,7 @@ def onShutdownPushed():
 
 
 def onSignalFromOS(signal_number, frame):
+    global return_code
     if key_interrupt:
         return     # already handled
     return_code = 0
@@ -178,6 +179,7 @@ def onDisconnect(params: Dict[Any, Any]) -> None:
 
 
 def onThreadException(args):
+    global return_code
     print("catch the thread exception - ", args.exc_type)
     log.info("exception on other thread, as " + str(args.exc_type))
     lcd.puts("OS Error", 0)
@@ -236,6 +238,7 @@ if __name__ == "__main__":
         event.set()
 
     finally:
+        log.info("Exiting with code - " + str(return_code))
         print("return code - ", return_code)
         time.sleep(2)
         cleanupAll()
