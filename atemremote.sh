@@ -10,13 +10,18 @@ sleep 7
 while true; do
   python3 ${LOCALDIR}/main.py
   EXITCODE=$?
-  echo Exit code - $EXITCODE
-  if [ $EXITCODE -eq 1 ]; then
-    sudo halt
-  fi
-  if [ $EXITCODE -eq 0 ]; then
-    exit 0
-  fi
+  EXITCODE=$?
+
+  case $EXITCODE in
+    0)
+      exit 0
+      ;;
+    1)
+      sudo halt
+      ;;
+    3)
+      sudo reboot
+  esac
   sleep 3
   echo Restarting the main program
 done
