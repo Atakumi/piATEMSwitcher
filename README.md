@@ -12,6 +12,17 @@ Just using existing library to access, but add some "programable" feature with h
   - You can design / build it as you like!
 - Python library : [PyATEMMax](https://clvlabs.github.io/PyATEMMax/)
 
+## Version history and features
+### Version 0.2
+New Feature: Generation of .drp files to simulate ATEM ISO switcher operations. This allows you to recreate switching events on the multicam timeline in DaVinci Resolve.
+
+For details on the .drp file format, please refer to: https://github.com/gilou/otio-drp-adapter
+
+Note: The .drp file generation feature is currently basic and supports only "transitions with the default effect." File and source descriptions in the header are not included. To enhance compatibility or add more metadata, please refer to the repository above and modify as needed for your workflow.
+
+### Version 0.1
+Initial version.
+
 ## GPIO connection to switch / LED / UPS or power switch(optional)
 
 ### NOTE: All port number is BCM standard
