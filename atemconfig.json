@@ -7,19 +7,19 @@
                 "index"        : 0,
                 "function"     : "preview",
                 "source"       : "input5",
-                "display-name" : "VI5 "
+                "display-name" : "CA1 "
             },
             {
                 "index"        : 1,
                 "function"     : "preview",
                 "source"       : "input6",
-                "display-name" : "VI6 "
+                "display-name" : "CA2 "
             },
             {
                 "index"        : 2,
                 "function"     : "preview",
-                "source"       : "mediaPlayer1",
-                "display-name" : "MP1 "
+                "source"       : "input7",
+                "display-name" : "CA3 "
             },
             {
                 "index"        : 3,

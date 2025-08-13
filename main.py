@@ -19,6 +19,7 @@ import gpio_handler
 import PyATEMMax
 import pi_lcd
 import util
+import switchlog
 
 event = threading.Event()
 config = util.ReadConfig()
@@ -33,6 +34,7 @@ log = logging.getLogger('ATEM-REMOTE')
 
 # Create ATEMMax object
 switcher = PyATEMMax.ATEMMax()
+
 # set packet log level
 # switcher.setSocketLogLevel(logging.DEBUG)
 
@@ -57,6 +59,7 @@ pgm_index = 99
 def cleanupAll():
     try:
         switcher.disconnect()
+        switchLog.close_log()
         button.cleanup()
         led.cleanup()
         lcd.cleanup()
@@ -65,22 +68,21 @@ def cleanupAll():
     except:
         pass          ## we all ignore exception occured during cleanup process
 
-
 def reflect_buttonled():
     global pvw_index, pgm_index
-    # log.info("index:" + str(pvw_index) + "/" + str(pgm_index))
     pvw_name = switcher.previewInput[0].videoSource.name
     pgm_name = switcher.programInput[0].videoSource.name
     new_pvw_index = SOURCE_LIST.index(pvw_name) if pvw_name in SOURCE_LIST else 99
+    new_pgm_index = SOURCE_LIST.index(pgm_name) if pgm_name in SOURCE_LIST else 99
     if new_pvw_index != pvw_index:
         led.Green(pvw_index, 0)
         led.Green(new_pvw_index, 1)
         pvw_index = new_pvw_index
-    new_pgm_index = SOURCE_LIST.index(pgm_name) if pgm_name in SOURCE_LIST else 99
     if new_pgm_index != pgm_index:
         led.Red(pgm_index, 0)
         led.Red(new_pgm_index, 1)
         pgm_index = new_pgm_index
+        switchLog.log_event(new_pgm_index, 0)
 
 ##
 ##  All event handlers
@@ -138,7 +140,7 @@ def onButtonPushed(btn):
         if btn_func == "runmacro":
             print("sending Run Macro command")
             macro_name = btn_info["macro-name"]
-            switcher.setMacroAction(macro_name, swicher.atem.macroActions.runMacro)
+            switcher.setMacroAction(macro_name, switcher.atem.macroActions.runMacro)
 
 
 def onReceive(params: Dict[Any, Any]) -> None:
@@ -153,14 +155,14 @@ def onReceive(params: Dict[Any, Any]) -> None:
     if params['cmd'] == "PrvI":
         reflect_buttonled()
 
-
 def onConnect(params: Dict[Any, Any]) -> None:
-    global connectedstate, never_connected
+    global connectedstate, never_connected, switchLog
     if connectedstate == False:
         connectedstate = True
         log.info("Connected.")
         lcd.puts("Connected.", 0)
         print("Connected.")
+    switchLog = switchlog.switchlog(switcher)
     reflect_buttonled()
     if never_connected:
         never_connected = False
@@ -176,10 +178,11 @@ def onDisconnect(params: Dict[Any, Any]) -> None:
     log.info("Disconnected.")
     print("Disconnected.")
     lcd.puts("Reconnecting...", 0)
-
+    switchLog.close_log()
 
 def onThreadException(args):
     global return_code
+    switchLog.close_log()
     print("catch the thread exception - ", args.exc_type)
     log.info("exception on other thread, as " + str(args.exc_type))
     lcd.puts("OS Error", 0)
@@ -198,7 +201,7 @@ if __name__ == "__main__":
     log.info("#### Started ####")
 
     lcd.puts("ATEM Remote", 0)
-    lcd.puts("   ver. 0.1", 1)
+    lcd.puts("   ver. 0.2", 1)
     time.sleep(2)
 
     log.info("Connecting to " + IP_ADDRESS)

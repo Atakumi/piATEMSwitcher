@@ -53,7 +53,7 @@ Just using existing library to access, but add some "programable" feature with h
 ### main.py
 - Main program
 
-### pi_lcd.py / gpio_handler.py / util.py
+### pi_lcd.py / gpio_handler.py / util.py / switchlog.py
 - Sub functions (as class)
 
 ### events.py
